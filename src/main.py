@@ -14,29 +14,62 @@ import numpy as np
 # Loads the data
 mnist_data = pickle.load(open('../data/mnist.pkl', 'rb'))
 
+# First picture
+input_data = mnist_data['training_images'][0]
+
 
 # Activation functions
 def sigmoid(x):
-    return 1.0/(1.0+np.exp(-x))
+    return 1.0/(1+ np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1.0 - x)
 
 
 #%%
-## INIT ##
+### INIT ###
 
 # Hyper parameters
-sizes = [784, 16, 16, 10]
-
 # 728 input, 28x28 picture
 # 2@16 Hidden neuron layers
 # 10 cells as output, 10 digits
 
-num_layers = len(sizes)
-
 # Biases
-b = [np.random.randn(y, 1) for y in sizes[1:]]
+b1 = np.random.randn(16, 1)
+b2 = np.random.randn(16, 1)
+b3 = np.random.randn(16, 1)
+b_output = np.random.randn(10, 1)
 
 # Weights
-w = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
+w1 = np.random.randn(input_data.shape[0], 1)
+w2 = np.random.randn(16, 1)
+w3 = np.random.randn(16, 1)
+w_output = np.random.randn(10, 16)
+
+## Feedforward ##
+layer1 = sigmoid(np.dot(input_data, w1) + b1)
+layer2 = sigmoid(np.dot(layer1.transpose(), w2) + b2)
+layer3 = sigmoid(np.dot(layer2.transpose(), w3) + b3)
+
+output = sigmoid(np.dot(w_output, layer3) + b_output)
+
+
+## ERROR  ##
+
+def MSE(output):
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
