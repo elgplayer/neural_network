@@ -10,67 +10,115 @@ import pickle
 
 import numpy as np
 
+### INIT ###
 
 # Loads the data
 mnist_data = pickle.load(open('../data/mnist.pkl', 'rb'))
 
-# First picture
-input_data = mnist_data['training_images'][0]
-
 
 # Activation functions
 def sigmoid(x):
-    return 1.0/(1+ np.exp(-x))
+    return 1.0/(1 + np.exp(-x))
 
 def sigmoid_derivative(x):
-    return x * (1.0 - x)
+    return x * (1.0 - sigmoid(x))
 
-
-#%%
-### INIT ###
 
 # Hyper parameters
 # 728 input, 28x28 picture
 # 2@16 Hidden neuron layers
 # 10 cells as output, 10 digits
 
+learning_rate = 0.1
+
+# Weights  
+w2 = np.random.randn(16, 784)
+w3 = np.random.randn(16, 16)
+w4 = np.random.randn(10, 16)
+
 # Biases
-b1 = np.random.randn(16, 1)
 b2 = np.random.randn(16, 1)
 b3 = np.random.randn(16, 1)
-b_output = np.random.randn(10, 1)
+b4 = np.random.randn(10, 1)
+#%%
 
-# Weights
-w1 = np.random.randn(input_data.shape[0], 1)
-w2 = np.random.randn(16, 1)
-w3 = np.random.randn(16, 1)
-w_output = np.random.randn(10, 16)
+# Loopy loop
+for k in range(100):
+    
+    selected_data = k
+    input_data = mnist_data['training_images'][selected_data]
+    input_data = input_data.reshape(784, 1)
+    correct_answer = mnist_data['training_labels'][selected_data]
 
-## Feedforward ##
-layer1 = sigmoid(np.dot(input_data, w1) + b1)
-layer2 = sigmoid(np.dot(layer1.transpose(), w2) + b2)
-layer3 = sigmoid(np.dot(layer2.transpose(), w3) + b3)
+    ## Feedforward ##
+    z2 = np.matmul(w2, input_data) + b2
+    layer2 = sigmoid(z2)
+    
+    z3 = np.matmul(w3, layer2) + b3
+    layer3 = sigmoid(z3)
+    
+    z4 = np.matmul(w4, layer3) + b4
+    layer4 = sigmoid(z4)
+    
+    output = layer4
+    #%%
+    
+    # Error
+    cost = 0
+    
+    for i in range(len(output)):
+        
+        if i == correct_answer:
+            
+            cost += (output[i][0] - 1)**2
+        
+        else: 
+            
+            cost += (output[i][0] - 0)**2
+    
+    # Nabla C
+    nabla_c = np.zeros((10, 1))
+            
+    for i in range(len(output)):
+        
+        if i == correct_answer:
+            
+            nabla_c[i] = (1 - output[i][0])
+        
+        else: 
+            
+            nabla_c[i] = (0 - output[i][0])
+            
+    
+    #%%
+    # Output error 
+    nabla_4 = np.multiply(nabla_c, sigmoid_derivative(z4))
+    
+    nabla_3 = np.multiply(np.matmul(w4.transpose(), nabla_4), sigmoid_derivative(z3))
+    
+    nabla_2 = np.multiply(np.matmul(w3.transpose(), nabla_3), sigmoid_derivative(z2))
+    
 
-output = sigmoid(np.dot(w_output, layer3) + b_output)
+    
+    #%%
+    ## Gradient decent ##
+    
+    # Weights update
+    w4 = w4 - learning_rate * np.matmul(nabla_4, layer3.transpose())
+    
+    w3 = w3 - learning_rate * np.matmul(nabla_3, layer2.transpose())
+    
+    w2 = w2 - learning_rate * np.matmul(nabla_2, input_data.transpose())
+    
+    # Biases update
+    b4 = b4 - learning_rate * nabla_4
+    
+    b3 = b3 - learning_rate * nabla_3
+    
+    b2 = b2 - learning_rate * nabla_2
 
-
-## ERROR  ##
-
-def MSE(output):
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #%%
+    
+    print(k, cost)
 
 
