@@ -9,8 +9,9 @@ import os
 import pickle
 
 import numpy as np
+import matplotlib.pyplot as plt
 
-### INIT ###
+## Setup ##
 
 # Loads the data
 mnist_data = pickle.load(open('../data/mnist.pkl', 'rb'))
@@ -18,18 +19,23 @@ mnist_data = pickle.load(open('../data/mnist.pkl', 'rb'))
 
 # Activation functions
 def sigmoid(x):
-    return 1.0/(1 + np.exp(-x))
+    return 1.0/(1.0 + np.exp(-x))
 
+# Derative of the Sigmoid fucntion
 def sigmoid_derivative(x):
-    return x * (1.0 - sigmoid(x))
+    return sigmoid(x) * (1.0 - sigmoid(x))
+
+# Plots the picture
+def picture_plot(input_data): 
+    
+    pixels = input_data.reshape((28, 28))
+    plt.imshow(pixels)
 
 
-# Hyper parameters
-# 728 input, 28x28 picture
-# 2@16 Hidden neuron layers
-# 10 cells as output, 10 digits
+# Params
+learning_rate = 0.01
 
-learning_rate = 0.1
+## Init ##
 
 # Weights  
 w2 = np.random.randn(16, 784)
@@ -43,14 +49,15 @@ b4 = np.random.randn(10, 1)
 #%%
 
 # Loopy loop
-for k in range(100):
+for k in range(1000):
     
     selected_data = k
     input_data = mnist_data['training_images'][selected_data]
     input_data = input_data.reshape(784, 1)
     correct_answer = mnist_data['training_labels'][selected_data]
+    
+    #%% Feedforward 
 
-    ## Feedforward ##
     z2 = np.matmul(w2, input_data) + b2
     layer2 = sigmoid(z2)
     
@@ -61,9 +68,9 @@ for k in range(100):
     layer4 = sigmoid(z4)
     
     output = layer4
-    #%%
+
+    #%% Error
     
-    # Error
     cost = 0
     
     for i in range(len(output)):
@@ -76,7 +83,8 @@ for k in range(100):
             
             cost += (output[i][0] - 0)**2
     
-    # Nabla C
+    #%% Nabla C 
+    
     nabla_c = np.zeros((10, 1))
             
     for i in range(len(output)):
@@ -87,21 +95,18 @@ for k in range(100):
         
         else: 
             
-            nabla_c[i] = (0 - output[i][0])
-            
+            nabla_c[i] = (0 - output[i][0])  
     
-    #%%
-    # Output error 
+    #%% Output error 
+    
     nabla_4 = np.multiply(nabla_c, sigmoid_derivative(z4))
     
     nabla_3 = np.multiply(np.matmul(w4.transpose(), nabla_4), sigmoid_derivative(z3))
     
     nabla_2 = np.multiply(np.matmul(w3.transpose(), nabla_3), sigmoid_derivative(z2))
     
-
     
-    #%%
-    ## Gradient decent ##
+    #%% Gradient decent 
     
     # Weights update
     w4 = w4 - learning_rate * np.matmul(nabla_4, layer3.transpose())
@@ -116,8 +121,6 @@ for k in range(100):
     b3 = b3 - learning_rate * nabla_3
     
     b2 = b2 - learning_rate * nabla_2
-
-    #%%
     
     print(k, cost)
 
