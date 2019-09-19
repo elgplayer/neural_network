@@ -62,10 +62,6 @@ def MSE(predicted_val, true_val):
     '''
     return np.square(np.subtract(true_val,predicted_val)).mean() 
     
-# initialization
-params = {"W1": np.random.randn(n_h, n_x) * np.sqrt(1. / n_x),
-          "b1": np.zeros((n_h, 1)) * np.sqrt(1. / n_x),
-          "W2": np.random.randn(digits, n_h) * np.sqrt(1. / n_h),
-          "b2": np.zeros((digits, 1)) * np.sqrt(1. / n_h)}
+
 
 
