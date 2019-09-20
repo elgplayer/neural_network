@@ -12,9 +12,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
-import argparse
-
-parser = argparse.ArgumentParser()
+from functions import *
 
 
 # HYPER PARAMETERS
@@ -32,36 +30,6 @@ x_train = mnist_data['training_images']
 y_train = mnist_data['training_labels']
 x_test  = mnist_data['test_images']
 y_test  = mnist_data['test_labels']
-
-# SGD
-def sigmoid(x):
-    '''
-    Sigmoid
-    
-    Attributes:
-        * x (???)
-    '''
-    return 1.0/(1 + np.exp(-x))
-
-def sigmoid_derivative(x):
-    '''
-    Sigmoid derivative
-    
-    Attributes:
-        * x (???)
-    '''
-    return x * (1.0 - x)
-
-def MSE(predicted_val, true_val):
-    '''
-    Mean Error Squared
-    
-    Attributes:
-        * predicted_val (numpy array): Predicted value
-        * true_val (numpy array): Correct value
-    '''
-    return np.square(np.subtract(true_val,predicted_val)).mean() 
-    
 
 
 
