@@ -211,19 +211,25 @@ end
 
 
 function calculate_pool_value(tmp_array, pooling_type)
+    """
+    Calculate the value of the tmp_array given a pooling type
+
+    Attributes:
         
+        * tmp_array (array): Temporary array
+        * pooling_type (str): What type of pooling (Max or Mean)
+
+    return: Pool value calculated from the tmp_array
+    """
     pool_value = Nothing
     
-
     if pooling_type == "max"
 
         pool_value = maximum(tmp_array)
-        #println("Max: ", pool_value)
     
     elseif pooling_type == "mean"
 
         pool_value = Statistics.mean(tmp_array)
-        #println("Mean: ", pool_value)
 
     else
 
@@ -236,39 +242,28 @@ function calculate_pool_value(tmp_array, pooling_type)
 end
 
 
-function swap(input, index_A, index_B)
-
-    temp = input[index_A];
- 
-    input[index_A] = input[index_B];
-    input[index_B] = temp;
-
-    return input
-
-end
-
-
 function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
-    #= 
+    """
+    
     Non overlapping pooling
 
     Attributes:
+
         * input_matrix (2d Matrix): Input matrix to perform the pooling one
         * pool_size (tuple): Tuple which shows the size of the pooling box in the X and Y direction
         * pooling_type (str): What type of pooling? (Max or Mean)
         * pad (boolean): Should we add zeros on the edge?
 
-    =#
+    """
 
 
     debug = true
     new_array = Vector{Float64}()
     
-    
-    println("----")
 
     if debug == true
         
+        println("----")
         println("Input matrix: ")
         show(stdout, "text/plain", input_matrix)    
         println("\n")
