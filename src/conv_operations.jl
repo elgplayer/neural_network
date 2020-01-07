@@ -161,6 +161,51 @@ function element_wise_mult(tmp_arr, filter_matrix)
 end
 
 
+function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
+
+    input_matrix_size = size(input_matrix, 2)
+    #println(input_matrix_size)
+
+    new_arr = Vector{Float64}() # Empty 1-d Vector
+
+    # Y-axis
+    for y = 0:pool_size[2]-1
+
+        input_matrix_i = y + matrix_index
+        println("input i: ", input_matrix_i)
+
+        # Get the value from the input_matrix
+        arr_value = input_matrix[input_matrix_i]
+
+        # Append the sum to a 1-d vector
+        append!(new_arr, arr_value)
+
+
+        for x=1:pool_size[1]-1
+
+            input_matrix_i = x * input_matrix_size + matrix_index + y
+            println("input i: ", input_matrix_i)
+
+            # Get the value from the input_matrix
+            arr_value = input_matrix[input_matrix_i]
+
+            # Append the sum to a 1-d vector
+            append!(new_arr, arr_value)
+
+        end
+
+    end
+
+    # Reshapes the 1-d vector into a 2-d matrix the size of number_of_steps*number_of_steps
+   #new_arr = reshape(new_arr, Int(pool_size[1]), :)
+
+    return new_arr
+
+
+end
+
+
+
 function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     #= 
     Non overlapping pooling
@@ -213,18 +258,17 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
         index_offset[2] = y * pool_size[2]
 
         matrix_index = index_offset[1] + index_offset[2]  + 1
-        #println("Matrix index: ", matrix_index)
-        
+   
         # Init empty array at the size of the filter
         tmp_arr = Matrix{Union{Nothing, Int64}}(nothing, pool_size[1], pool_size[2])
-        #show(stdout, "text/plain", tmp_arr)
-
 
         for x = 1:number_of_steps[1]-1
 
+            #println("Index offset: ", index_offset)
             println("Matrix index: ", matrix_index)
+            lok = create_tmp_array(input_matrix, matrix_index, pool_size)
 
-            tmp_arr = Matrix{Union{Nothing, Int64}}(nothing, pool_size[1], pool_size[2])
+            #tmp_arr = Matrix{Union{Nothing, Int64}}(nothing, pool_size[1], pool_size[2])
             index_offset[1] = x * input_matrix_size * pool_size[1]
 
             matrix_index = matrix_index + index_offset[1]
@@ -232,17 +276,8 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
         end
 
-        
     end
 
-
-
-
-
-
-
-
-    return number_of_steps_x
 
 end
 
