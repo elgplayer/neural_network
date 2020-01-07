@@ -1,4 +1,5 @@
 
+import Statistics
 
 input_matrix = [2 0 1 1; 0 1 0 0; 0 0 1 0; 0 3 0 0]
 filter_matrix = [1 0 1; 0 0 0; 0 1 0]
@@ -164,7 +165,6 @@ end
 function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
 
     input_matrix_size = size(input_matrix, 2)
-    #println(input_matrix_size)
 
     new_arr = Vector{Float64}() # Empty 1-d Vector
 
@@ -172,7 +172,7 @@ function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
     for y = 0:pool_size[2]-1
 
         input_matrix_i = y + matrix_index
-        println("input i: ", input_matrix_i)
+        #println("input i: ", input_matrix_i)
 
         # Get the value from the input_matrix
         arr_value = input_matrix[input_matrix_i]
@@ -180,11 +180,10 @@ function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
         # Append the sum to a 1-d vector
         append!(new_arr, arr_value)
 
-
         for x=1:pool_size[1]-1
 
             input_matrix_i = x * input_matrix_size + matrix_index + y
-            println("input i: ", input_matrix_i)
+            #println("input i: ", input_matrix_i)
 
             # Get the value from the input_matrix
             arr_value = input_matrix[input_matrix_i]
@@ -196,11 +195,39 @@ function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
 
     end
 
+    #show(stdout, "text/plain", new_arr)
+
     # Reshapes the 1-d vector into a 2-d matrix the size of number_of_steps*number_of_steps
    #new_arr = reshape(new_arr, Int(pool_size[1]), :)
 
     return new_arr
 
+
+end
+
+
+function calculate_pool_value(tmp_array, pooling_type)
+        
+    pool_value = Nothing
+    
+
+    if pooling_type == "max"
+
+        pool_value = maximum(tmp_array)
+        #println("Max: ", pool_value)
+    
+    elseif pooling_type == "mean"
+
+        pool_value = Statistics.mean(tmp_array)
+        #println("Mean: ", pool_value)
+
+    else
+
+        throw("Pooling function not supported")
+
+    end
+
+    return pool_value
 
 end
 
@@ -218,9 +245,17 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
     =#
 
+
+    debug = true
     println("----")
-    show(stdout, "text/plain", input_matrix)    
-    println("\n\n")
+
+    if debug == true
+        
+        println("Input matrix: ")
+        show(stdout, "text/plain", input_matrix)    
+        println("\n")
+    
+    end
 
     # Get the size of the input_matrix
     input_matrix_size = size(input_matrix, 2)
@@ -228,7 +263,7 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     # Create a tuple of how many steps the filter can go
     number_of_steps = (input_matrix_size / pool_size[1], input_matrix_size / pool_size[2])
     index_offset = [0, 0] # Init the index off Set
-    new_arr = Vector{Float64}() # Empty 1-d Vector
+    #new_arr = Vector{Float64}() # Empty 1-d Vector
 
     # Check if the number of steps are divisible
     if isinteger(number_of_steps[1]) == false || isinteger(number_of_steps[2])  == false
@@ -239,15 +274,16 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
         else
 
-            println("FILTER_IS_FLOAT")
-            return "FILTER_IS_FLOAT"
+            throw("FILTER_IS_FLOAT")
 
         end
 
     end
 
 
-    println("Number of steps: ", number_of_steps)
+    
+    #tmp_arr = Nothing;
+    new_array = Vector{Float64}()
 
     # Creates the index_offset_list
     for y=0:number_of_steps[2]-1
@@ -258,35 +294,62 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
         index_offset[2] = y * pool_size[2]
 
         matrix_index = index_offset[1] + index_offset[2]  + 1
-   
-        # Init empty array at the size of the filter
-        tmp_arr = Matrix{Union{Nothing, Int64}}(nothing, pool_size[1], pool_size[2])
+
+
+        tmp_arr = create_tmp_array(input_matrix, matrix_index, pool_size)
+        pool_value = calculate_pool_value(tmp_arr, pooling_type)
+        append!(new_array, pool_value)
 
         for x = 1:number_of_steps[1]-1
 
-            #println("Index offset: ", index_offset)
-            println("Matrix index: ", matrix_index)
-            lok = create_tmp_array(input_matrix, matrix_index, pool_size)
-
-            #tmp_arr = Matrix{Union{Nothing, Int64}}(nothing, pool_size[1], pool_size[2])
             index_offset[1] = x * input_matrix_size * pool_size[1]
-
             matrix_index = matrix_index + index_offset[1]
-            println("Matrix index: ", matrix_index)
+
+            tmp_arr = create_tmp_array(input_matrix, matrix_index, pool_size)
+            pool_value = calculate_pool_value(tmp_arr, pooling_type)
+            
+            append!(new_array, pool_value)
 
         end
 
     end
+
+    if debug == true
+
+        println("Output matrix: ")
+        show(stdout, "text/plain", new_array)
+        println("\n")
+
+        return new_array
+
+
+    end
+
+    # If it is a square, then we can resize it
+    if pool_size[1] == pool_size[2]
+
+        new_array = reshape(new_array, Int(pool_size[1]), Int(pool_size[2]))
+
+    end
+
+
+    
+
+
+    return new_array
+
+
+      
 
 
 end
 
 
 
-number_of_steps_x = pooling(input_matrix)
+new_array = pooling(input_matrix, (2, 2), "max")
 
 
 
 # Shows the convuluted array
 # smaller_array = striding(input_matrix, filter_matrix, 2)
-# show(stdout, "text/plain", smaller_array)
+# show(stdout, "text/plain", smaller_array)ö
