@@ -13,6 +13,8 @@ filter_matrix = [1 0 1; 0 0 0; 0 1 0]
 #input_matrix = [2 6 3 7 4 3  0; 3 6 4 8 2 2 1; 7 9 8 3 1 4 3; 4 8 3 6 8 1 9; 6 7 8 6 3 9 2; 2 4 9 3 4 8 1; 9 3 7 4 6 3 4]
 #filter_matrix = [3 1 -1; 4 0 0; 4 2 3]
 
+input_matrix = [2 3 0 5 2.5 0; 2 1.5 0.5 0 7 0; 1.5 5 5 3 2 0; 3 5 7 1.5 0 0 ; 2 5 2 1.5 2 0; 0 0 0 0 0 0]
+
 # Todo: Maybe support diffrent stride for X and Y
 function striding(input_matrix, filter_arr, step_size=1)
     #=
@@ -168,11 +170,13 @@ function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
 
     new_arr = Vector{Float64}() # Empty 1-d Vector
 
+    println("Matrix index: ", matrix_index)
+
     # Y-axis
     for y = 0:pool_size[2]-1
 
         input_matrix_i = y + matrix_index
-        #println("input i: ", input_matrix_i)
+        println("input i: ", input_matrix_i)
 
         # Get the value from the input_matrix
         arr_value = input_matrix[input_matrix_i]
@@ -232,6 +236,17 @@ function calculate_pool_value(tmp_array, pooling_type)
 end
 
 
+function swap(input, index_A, index_B)
+
+    temp = input[index_A];
+ 
+    input[index_A] = input[index_B];
+    input[index_B] = temp;
+
+    return input
+
+end
+
 
 function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     #= 
@@ -247,6 +262,9 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
 
     debug = true
+    new_array = Vector{Float64}()
+    
+    
     println("----")
 
     if debug == true
@@ -263,7 +281,6 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     # Create a tuple of how many steps the filter can go
     number_of_steps = (input_matrix_size / pool_size[1], input_matrix_size / pool_size[2])
     index_offset = [0, 0] # Init the index off Set
-    #new_arr = Vector{Float64}() # Empty 1-d Vector
 
     # Check if the number of steps are divisible
     if isinteger(number_of_steps[1]) == false || isinteger(number_of_steps[2])  == false
@@ -280,39 +297,27 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
     end
 
-
-    
-    #tmp_arr = Nothing;
-    new_array = Vector{Float64}()
-
     # Creates the index_offset_list
-    for y=0:number_of_steps[2]-1
+    for x = 0:number_of_steps[1]-1
 
         # Set the index offset
-        x = 0
-        index_offset[1] = x * pool_size[1]
-        index_offset[2] = y * pool_size[2]
+        index_offset[1] = x * input_matrix_size * pool_size[1] 
 
-        matrix_index = index_offset[1] + index_offset[2]  + 1
+        for y=0:number_of_steps[2]-1
 
+            index_offset[2] = y * pool_size[2] + 1
 
-        tmp_arr = create_tmp_array(input_matrix, matrix_index, pool_size)
-        pool_value = calculate_pool_value(tmp_arr, pooling_type)
-        append!(new_array, pool_value)
-
-        for x = 1:number_of_steps[1]-1
-
-            index_offset[1] = x * input_matrix_size * pool_size[1]
-            matrix_index = matrix_index + index_offset[1]
-
+            matrix_index = index_offset[1] + index_offset[2]
+            
+            # Append the new pool value to the temporary array
             tmp_arr = create_tmp_array(input_matrix, matrix_index, pool_size)
             pool_value = calculate_pool_value(tmp_arr, pooling_type)
-            
             append!(new_array, pool_value)
 
         end
 
     end
+
 
     if debug == true
 
@@ -320,28 +325,18 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
         show(stdout, "text/plain", new_array)
         println("\n")
 
-        return new_array
-
-
     end
 
     # If it is a square, then we can resize it
     if pool_size[1] == pool_size[2]
 
-        new_array = reshape(new_array, Int(pool_size[1]), Int(pool_size[2]))
+        new_array = reshape(new_array, Int(sqrt(size(new_array)[1])), :)
 
     end
 
 
-    
-
-
     return new_array
-
-
-      
-
-
+    
 end
 
 
