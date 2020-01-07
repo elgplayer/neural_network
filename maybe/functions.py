@@ -47,6 +47,23 @@ def MSE(predicted_val, true_val):
     return np.square(np.subtract(true_val,predicted_val)).mean() 
     
 
+def compute_loss(Y, Y_hat):
+
+    m = Y.shape[1]
+    L = -(1./m) * ( np.sum( np.multiply(np.log(Y_hat),Y) ) + np.sum( np.multiply(np.log(1-Y_hat),(1-Y)) ) )
+
+    return L
+
+
+def compute_multiclass_loss(Y, Y_hat):
+
+    L_sum = np.sum(np.multiply(Y, np.log(Y_hat)))
+    m = Y.shape[1]
+    L = -(1/m) * L_sum
+
+    return L
+
+
 def picture_plot(x):
     '''
     Plots the picture given a 784 Numpy array
