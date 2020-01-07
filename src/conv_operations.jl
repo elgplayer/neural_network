@@ -15,6 +15,9 @@ filter_matrix = [1 0 1; 0 0 0; 0 1 0]
 
 input_matrix = [2 3 0 5 2.5 0; 2 1.5 0.5 0 7 0; 1.5 5 5 3 2 0; 3 5 7 1.5 0 0 ; 2 5 2 1.5 2 0; 0 0 0 0 0 0]
 
+input_matrix = [2 3 0 5 2.5; 2 1.5 0.5 0 7; 1.5 5 5 3 2; 3 5 7 1.5 0 ; 2 5 2 1.5 2]
+
+
 # Todo: Maybe support diffrent stride for X and Y
 function striding(input_matrix, filter_arr, step_size=1)
     #=
@@ -140,7 +143,7 @@ end
 
 
 function element_wise_mult(tmp_arr, filter_matrix)
-    #=
+    """
 
     Does the element wise multiplication
 
@@ -149,7 +152,7 @@ function element_wise_mult(tmp_arr, filter_matrix)
 
     return: Sum of the given element wise multiplication
 
-    =#
+    """
 
     Σ_filter = 0
 
@@ -165,18 +168,26 @@ end
 
 
 function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
+    """
+    Creates a temporary array of the contents of the 
+    input matrix according to a size of the poolsize at index determined by the matrix_index
+
+    Attributes:
+
+        * input_matrix (matrix): input_matrix
+        * matrix_index (int): Index where the pool_size should stride from
+        * pool_size (tuple): How large should the tmp_array be
+
+    return: tmp_array at the size of (x / pool_size[1] * y / pool_size[2])
+    """
 
     input_matrix_size = size(input_matrix, 2)
-
     new_arr = Vector{Float64}() # Empty 1-d Vector
-
-    println("Matrix index: ", matrix_index)
 
     # Y-axis
     for y = 0:pool_size[2]-1
 
         input_matrix_i = y + matrix_index
-        println("input i: ", input_matrix_i)
 
         # Get the value from the input_matrix
         arr_value = input_matrix[input_matrix_i]
@@ -187,7 +198,6 @@ function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
         for x=1:pool_size[1]-1
 
             input_matrix_i = x * input_matrix_size + matrix_index + y
-            #println("input i: ", input_matrix_i)
 
             # Get the value from the input_matrix
             arr_value = input_matrix[input_matrix_i]
@@ -199,13 +209,32 @@ function create_tmp_array(input_matrix, matrix_index, pool_size=(2,2))
 
     end
 
-    #show(stdout, "text/plain", new_arr)
-
-    # Reshapes the 1-d vector into a 2-d matrix the size of number_of_steps*number_of_steps
-   #new_arr = reshape(new_arr, Int(pool_size[1]), :)
-
     return new_arr
 
+
+end
+
+
+function pad_array(input_matrix)
+    """
+    Pad the array's edges with zeros
+
+    Attributes:
+
+        * input_matrix (matrix): Input matrix to pad with zeros
+
+    return: input_matrix padded with zeros
+    """
+    
+    input_matrix_size = size(input_matrix, 2)
+
+    # Add zero row under the input_matrix
+    input_matrix = [input_matrix; zeros(input_matrix_size)']
+
+    # Add zeros to the right side of the input_matrix
+    input_matrix = [input_matrix hcat(zeros(input_matrix_size+1))]
+
+    return input_matrix
 
 end
 
@@ -257,13 +286,13 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     """
 
 
-    debug = true
+    debug = false
     new_array = Vector{Float64}()
-    
+    index_offset = [0, 0] # Init the index off Set
 
+    println("----")
     if debug == true
         
-        println("----")
         println("Input matrix: ")
         show(stdout, "text/plain", input_matrix)    
         println("\n")
@@ -273,9 +302,24 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     # Get the size of the input_matrix
     input_matrix_size = size(input_matrix, 2)
 
+    if input_matrix_size % pool_size[1] != 0 || input_matrix_size % pool_size[2] != 0
+
+        if pad == true
+
+            input_matrix = pad_array(input_matrix)
+            input_matrix_size = size(input_matrix, 2) # Recalculate the size of the array
+
+        else
+
+            throw("FILTER_IS_FLOAT")
+
+        end
+
+    end
+
     # Create a tuple of how many steps the filter can go
     number_of_steps = (input_matrix_size / pool_size[1], input_matrix_size / pool_size[2])
-    index_offset = [0, 0] # Init the index off Set
+    
 
     # Check if the number of steps are divisible
     if isinteger(number_of_steps[1]) == false || isinteger(number_of_steps[2])  == false
@@ -283,6 +327,7 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
         if pad == true
 
             println("Starting to pad!")
+            input_matrix = pad_array(input_matrix)
 
         else
 
@@ -322,12 +367,11 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
     end
 
-    # If it is a square, then we can resize it
-    if pool_size[1] == pool_size[2]
+    # Reshape tuple
+    reshape_tuple = (Int(input_matrix_size / pool_size[1]), Int(input_matrix_size / pool_size[2]))
 
-        new_array = reshape(new_array, Int(sqrt(size(new_array)[1])), :)
-
-    end
+    # Reshape the acutal array
+    new_array = reshape(new_array, reshape_tuple[1], reshape_tuple[2])
 
 
     return new_array
@@ -335,11 +379,9 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 end
 
 
-
-new_array = pooling(input_matrix, (2, 2), "max")
-
+new_array = pooling(input_matrix, (2, 2), "max", true)
 
 
 # Shows the convuluted array
 # smaller_array = striding(input_matrix, filter_matrix, 2)
-# show(stdout, "text/plain", smaller_array)ö
+show(stdout, "text/plain", new_array)
