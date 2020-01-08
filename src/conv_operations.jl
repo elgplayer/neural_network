@@ -1,8 +1,8 @@
 
 import Statistics
 
-input_matrix = [2 0 1 1; 0 1 0 0; 0 0 1 0; 0 3 0 0]
-filter_matrix = [1 0 1; 0 0 0; 0 1 0]
+#input_matrix = [2 0 1 1; 0 1 0 0; 0 0 1 0; 0 3 0 0]
+#filter_matrix = [1 0 1; 0 0 0; 0 1 0]
 
 # Striding: https://d2l.ai/chapter_convolutional-neural-networks/padding-and-strides.html
 # Adding the result to a new matrix: https://stackoverflow.com/questions/29897498/how-to-construct-matrix-from-row-column-vectors-in-julia
@@ -10,27 +10,33 @@ filter_matrix = [1 0 1; 0 0 0; 0 1 0]
 # input_matrix = [0 0 0 0 0; 0 0 3 6 0; 0 1 4 7 0; 0 2 5 8 0; 0 0 0 0 0]
 # filter_matrix = [0 2; 1 3]
 
-#input_matrix = [2 6 3 7 4 3  0; 3 6 4 8 2 2 1; 7 9 8 3 1 4 3; 4 8 3 6 8 1 9; 6 7 8 6 3 9 2; 2 4 9 3 4 8 1; 9 3 7 4 6 3 4]
-#filter_matrix = [3 1 -1; 4 0 0; 4 2 3]
+input_matrix = [0 0 0 0 0; 0 0 3 6 0; 0 1 4 7 0; 0 2 5 8 0; 0 0 0 0 0]
 
-input_matrix = [2 3 0 5 2.5 0; 2 1.5 0.5 0 7 0; 1.5 5 5 3 2 0; 3 5 7 1.5 0 0 ; 2 5 2 1.5 2 0; 0 0 0 0 0 0]
 
-input_matrix = [2 3 0 5 2.5; 2 1.5 0.5 0 7; 1.5 5 5 3 2; 3 5 7 1.5 0 ; 2 5 2 1.5 2]
+input_matrix = [0 0 0 0 0; 0 0 1 2 0; 0 3 4 5 0; 0 6 7 8 0; 0 0 0 0 0]
+filter_matrix = [0 1; 2 3]
+ 
+input_matrix = [2 3 7 4 6 2 9; 6 6 9 8 7 4 3; 3 4 8 3 8 9 7; 7 8 3 6 6 3 4; 4 2 1 8 3 4 6; 3 2 4 1 9 8 3; 0 1 3 9 2 1 4]
+filter_matrix = [3 4 4; 1 0 2; -1 0 3]
+
+# input_matrix = [2 3 0 5 2.5 0; 2 1.5 0.5 0 7 0; 1.5 5 5 3 2 0; 3 5 7 1.5 0 0 ; 2 5 2 1.5 2 0; 0 0 0 0 0 0]
+# input_matrix = [2 3 0 5 2.5; 2 1.5 0.5 0 7; 1.5 5 5 3 2; 3 5 7 1.5 0 ; 2 5 2 1.5 2]
 
 
 # Todo: Maybe support diffrent stride for X and Y
 function striding(input_matrix, filter_arr, step_size=1)
-    #=
+    """
 
     Stride over an array given an kernel
 
-    input_matrix: Input matrix
-    filter_arr: Kernel
-    step_size: How much should the filter move?
+    Attributes:
+
+        * input_matrix: Input matrix
+        * filter_arr: Kernel
+        * step_size: How much should the filter move?
 
     return: New smaller array
-
-    =#
+    """
     println("-------")
 
     # Gets the box size
@@ -80,9 +86,9 @@ function striding(input_matrix, filter_arr, step_size=1)
 
     end
 
-
     # Reshapes the 1-d vector into a 2-d matrix the size of number_of_steps*number_of_steps
     new_arr = reshape(new_arr, Int(number_of_steps), :)
+    new_arr = transpose(new_arr) # Flip the array, indexing is switched
 
     return new_arr
 
@@ -90,15 +96,17 @@ end
 
 
 function temp_index(input_matrix, filter_arr, index_offset)
-    #=
+    """
 
     Creates a temporary array that can be used to do the elementwise multiplication with the kernel
 
-    input_matrix: Input matrix
-    filter_arr: Kernel matrix
-    index_offset: How offset the index is
+    Attributes:
 
-    =#
+        * input_matrix: Input matrix
+        * filter_arr: Kernel matrix
+        * index_offset: How offset the index is
+
+    """
 
     # Gets the size of the arrays
     input_matrix_size = size(input_matrix, 2)
@@ -110,7 +118,7 @@ function temp_index(input_matrix, filter_arr, index_offset)
     matrix_index = x + y + 1
 
     # Init empty array at the size of the filter
-    tmp_arr = Matrix{Union{Nothing, Int64}}(nothing, filter_arr_size, filter_arr_size)
+    tmp_arr = Matrix{Union{Nothing, Float64}}(nothing, filter_arr_size, filter_arr_size)
 
     # Loop through the filter
     for i = 0:filter_arr_size-1
@@ -144,14 +152,14 @@ end
 
 function element_wise_mult(tmp_arr, filter_matrix)
     """
+    Element-wise multiplication
 
-    Does the element wise multiplication
+    Attributes:
 
-    tmp_arr: Input array
-    filter_matrix: kernel
+        * tmp_arr: Input array
+        * filter_matrix: kernel
 
     return: Sum of the given element wise multiplication
-
     """
 
     Σ_filter = 0
@@ -273,7 +281,6 @@ end
 
 function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     """
-    
     Non overlapping pooling
 
     Attributes:
@@ -284,7 +291,6 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
         * pad (boolean): Should we add zeros on the edge?
 
     """
-
 
     debug = false
     new_array = Vector{Float64}()
@@ -302,6 +308,7 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     # Get the size of the input_matrix
     input_matrix_size = size(input_matrix, 2)
 
+    # Check that the steps are even
     if input_matrix_size % pool_size[1] != 0 || input_matrix_size % pool_size[2] != 0
 
         if pad == true
@@ -319,23 +326,6 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 
     # Create a tuple of how many steps the filter can go
     number_of_steps = (input_matrix_size / pool_size[1], input_matrix_size / pool_size[2])
-    
-
-    # Check if the number of steps are divisible
-    if isinteger(number_of_steps[1]) == false || isinteger(number_of_steps[2])  == false
-
-        if pad == true
-
-            println("Starting to pad!")
-            input_matrix = pad_array(input_matrix)
-
-        else
-
-            throw("FILTER_IS_FLOAT")
-
-        end
-
-    end
 
     # Creates the index_offset_list
     for x = 0:number_of_steps[1]-1
@@ -379,9 +369,9 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
 end
 
 
-new_array = pooling(input_matrix, (2, 2), "max", true)
+#new_array = pooling(input_matrix, (2, 2), "max", true)
 
 
 # Shows the convuluted array
-# smaller_array = striding(input_matrix, filter_matrix, 2)
-show(stdout, "text/plain", new_array)
+smaller_array = striding(input_matrix, filter_matrix, 2)
+show(stdout, "text/plain", smaller_array)
