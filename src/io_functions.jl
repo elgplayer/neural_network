@@ -2,7 +2,7 @@
 __precompile__()
 
 
-module Data_Reading
+#module Data_Reading
 
 using CSV
 
@@ -13,7 +13,7 @@ using CSV
 # end
 # https://www.juliabloggers.com/classifying-handwritten-digits-with-neural-networks/
 
-export read_dataset
+#export read_dataset
 
 function read_dataset()
 
@@ -37,9 +37,13 @@ function read_dataset()
    n_cols = 28
    picture_data_matrix = reshape(picture_data_matrix, n_rows, n_cols)
 
-   return picture_data_matrix
+   # TODO: Unclear why
+   # The data needs to be rotated 90 degress to the left
+   picture_data_matrix = rotl90(picture_data_matrix)
+
+   return (label, picture_data_matrix)
 
 end
 
 
-end
+#end
