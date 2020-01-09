@@ -1,0 +1,51 @@
+# Sigmoid activation function
+σ(x) = 1 / (1 + exp(-x))
+    
+# Sigmoid derative
+σ̀′(x) = σ(x) * (1 - σ(x))
+
+# ReLU
+function ReLU(x)
+    
+    if x <= 0
+    
+        return 0
+    
+    else
+
+        return x
+
+    end
+
+end
+
+# Leaky ReLU
+function leaky_ReLU(x)
+    
+    if x < 0
+    
+        return 0.01 * x
+    
+    else
+
+        return x
+    
+    end
+
+end
+
+# Relu derative
+function ReLU_der(x)
+
+    if x < 0
+
+        return 0
+
+    else
+
+        return 1
+
+    end
+
+end
+
