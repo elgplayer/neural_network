@@ -1,3 +1,7 @@
+
+__precompile__()
+
+
 module Data_Reading
 
 using CSV
