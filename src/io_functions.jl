@@ -1,10 +1,9 @@
 
 using CSV
-#using PyPlot
 
-
-file_path = "data/mnist_test_small.csv"
-data = CSV.read(file_path)
+# Read the data
+const file_path = "data/mnist_test_small.csv"
+const data = CSV.read(file_path)
 
 # # Iterate over the rows
 # for i = 1:size(data)[1]
@@ -26,8 +25,7 @@ for i=1:size(picture_data)[1]
 
 end
 
-n_rows = 28
-n_cols = 28
+const n_rows = 28
+const n_cols = 28
 picture_data_matrix = reshape(picture_data_matrix, n_rows, n_cols)
-   
-
+println("END!")
