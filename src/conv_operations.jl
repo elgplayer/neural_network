@@ -375,10 +375,11 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     
 end
 
-
+# 2x2 max pooling on the array
 #new_array = pooling(input_matrix, (2, 2), "max", true)
 
+# Does the convultion operation on the input matrix
+# smaller_array = striding(input_matrix, filter_matrix, 1)
 
-# Shows the convuluted array
-smaller_array = striding(input_matrix, filter_matrix, 1)
-show(stdout, "text/plain", smaller_array)
+# Pretty prints the array
+#show(stdout, "text/plain", smaller_array)
