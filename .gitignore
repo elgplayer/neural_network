@@ -106,3 +106,7 @@ venv.bak/
 
 
 *.code-workspace
+
+# TMP
+data/mnist_test.csv
+data/mnist_train.csv
