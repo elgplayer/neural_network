@@ -25,3 +25,22 @@ function MSE(Y_𝒊, Ŷ__𝒊)
     end
 
 end
+
+
+function one_hot(label)
+    """
+    Takes a label and returns an array that is one hot encoded
+
+    Attributes:
+        
+        * label (int): Label of the image that is the correct answer
+
+    return: One hot encoded array
+    """
+
+    return_arr = zeros(10)
+    return_arr[label + 1] = 1
+
+    return return_arr
+
+end
