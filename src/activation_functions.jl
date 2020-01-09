@@ -1,11 +1,11 @@
 # Sigmoid activation function
-σ(x) = 1 / (1 + exp(-x))
+σ(x::Real) = one(x) / (one(x) + exp(-x))
     
 # Sigmoid derative
 σ̀′(x) = σ(x) * (1 - σ(x))
 
 # ReLU
-function ReLU(x)
+function ReLU(x::Real)
     
     if x <= 0
     
@@ -20,7 +20,7 @@ function ReLU(x)
 end
 
 # Leaky ReLU
-function leaky_ReLU(x)
+function leaky_ReLU(x::Real)
     
     if x < 0
     
@@ -35,7 +35,7 @@ function leaky_ReLU(x)
 end
 
 # Relu derative
-function ReLU_der(x)
+function ReLU_der(x::Real)
 
     if x < 0
 

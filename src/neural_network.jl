@@ -38,7 +38,7 @@ function one_hot(label)
     return: One hot encoded array
     """
 
-    return_arr = zeros(10)
+    return_arr = zeros(1, 10)
     return_arr[label + 1] = 1
 
     return return_arr
