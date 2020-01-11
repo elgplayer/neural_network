@@ -93,12 +93,15 @@ b2 = np.zeros((1, 1))
 
 for i in range(2000):
     
+    print(i)
+    
     Z1 = np.matmul(W1, X) + b1
     A1 = sigmoid(Z1)
     Z2 = np.matmul(W2, A1) + b2
     A2 = sigmoid(Z2)
 
     cost = compute_loss(Y, A2)
+    break
 
     dZ2 = A2-Y
     dW2 = (1./m) * np.matmul(dZ2, A1.T)
@@ -113,8 +116,11 @@ for i in range(2000):
     b2 = b2 - learning_rate * db2
     W1 = W1 - learning_rate * dW1
     b1 = b1 - learning_rate * db1
+    
+    
 
     if i % 100 == 0:
         print("Epoch", i, "cost: ", cost)
+        #break
 
 print("Final cost:", cost)

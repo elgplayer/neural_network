@@ -2,7 +2,7 @@
 σ(x::Real) = one(x) / (one(x) + exp(-x))
     
 # Sigmoid derative
-σ̀′(x) = σ(x) * (1 - σ(x))
+σ′(x) = σ(x) * (1 - σ(x))
 
 # ReLU
 function ReLU(x::Real)

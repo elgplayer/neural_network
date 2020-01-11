@@ -16,7 +16,7 @@ function MSE(Y_𝒊, Ŷ__𝒊)
 
     if length(Y_𝒊) == length(Ŷ__𝒊)
 
-        return sum((Y_𝒊 - Ŷ__𝒊) .^ 2)
+        return (sum((Y_𝒊 - Ŷ__𝒊) .^ 2) / 2)
         
     else
 
@@ -25,6 +25,15 @@ function MSE(Y_𝒊, Ŷ__𝒊)
     end
 
 end
+
+function cost_derivative(output, desired_output)
+    return output - desired_output
+end
+
+function hadmard(A, B)
+    broadcast!(*,A,A,B)
+end
+
 
 
 function one_hot(label)
@@ -38,7 +47,7 @@ function one_hot(label)
     return: One hot encoded array
     """
 
-    return_arr = zeros(1, 10)
+    return_arr = zeros(10)
     return_arr[label + 1] = 1
 
     return return_arr

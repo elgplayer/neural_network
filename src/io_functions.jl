@@ -16,13 +16,13 @@ using CSV
 
 #export read_dataset
 
-function read_dataset(data_reshape=false)
+function read_dataset(row=1, data_reshape=false)
 
    # Read the data
    file_path = "data/mnist_test_small.csv"
    data = CSV.read(file_path)
 
-   i = 1
+   i = row
    row = data[i, :]
    label = row.label
    picture_data = row[2:size(row)[1]]
