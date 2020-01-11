@@ -55,3 +55,32 @@ function read_dataset(file_name="mnist_train")
    return image_list
 
 end
+
+
+function plot_picture(image)
+   """
+   Plots a picture given an array
+
+   Attributes:
+
+       * image (Vector): 1D input vector to reshape to a n*n matrix which will be plotted
+
+   """
+
+   # Takes the square of the matrix
+   image_dim = sqrt(size(image)[1])
+
+   # Checks if it is a perfect square or not
+   if isinteger(image_dim) == true
+
+       image_dim = Int(image_dim) # Convert Float to Int
+       image = reshape(image, image_dim, image_dim) # Reshape the matrix to the squares dimensions
+       heatmap(image) # Plot the image
+
+   else
+
+       throw("IMAGE_DIM_IS_FLOAT")
+
+   end
+
+end

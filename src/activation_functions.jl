@@ -50,7 +50,7 @@ function ReLU_der(x::Real)
 end
 
 
-function activation_function(input, derative=false, activation_function="sigmoid")
+function activation_function(input, activation_function="sigmoid", derative=false)
 
     if activation_function == "sigmoid"
 

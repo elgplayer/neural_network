@@ -41,6 +41,9 @@ let
     global cost_arr = []
     global prediction_arr = []
 
+    activation_func="sigmoid"
+    derative=true
+
     println("-- Starting --")
 
     for epoch=1:epoches
@@ -59,35 +62,32 @@ let
 
             # Feedforward
             z1 = (w1 * x) .+ b1
-            a1 = activation_function(z1)
+            a1 = activation_function(z1, activation_func)
 
             z2 = (w2 * a1) .+ b2
-            a2 = activation_function(z2)
+            a2 = activation_function(z2, activation_func)
 
             z3 = (w3 * a2)
-            a3 = activation_function(z3)
+            a3 = activation_function(z3, activation_func)
 
             # Make the label one hot encoded
             desired_output = one_hot(label)
 
             # Calculate the cost
             cost = MSE(a3, desired_output)
-            #println(cost)
-            #old_cost = cost
-            #append!(cost_arr, cost)
 
             # Back propigation
             # Error in output layer
             ∇a_C_3 = cost_derivative(a3, desired_output)
-            δ_3 = hadmard(∇a_C_3, activation_function(z3, true))
+            δ_3 = hadmard(∇a_C_3, activation_function(z3, activation_func, derative))
 
             # Error in second layer
             ∇a_C_2 = (transpose(w3) * δ_3)  
-            δ_2 = hadmard(∇a_C_2, activation_function(z2, true))
+            δ_2 = hadmard(∇a_C_2, activation_function(z2, activation_func, derative))
 
             # Error in first layer
             ∇a_C_1 = (transpose(w2) * δ_2)  
-            δ_1 = hadmard(∇a_C_1, activation_function(z1, true))
+            δ_1 = hadmard(∇a_C_1, activation_function(z1, activation_func, derative))
 
 
             # Gradient descent
@@ -122,13 +122,14 @@ let
 
             # Feedforward
             z1 = (w1 * x) .+ b1
-            a1 = activation_function(z1)
+            a1 = activation_function(z1, activation_func)
 
             z2 = (w2 * a1) .+ b2
-            a2 = activation_function(z2)
+            a2 = activation_function(z2, activation_func)
 
             z3 = (w3 * a2)
-            a3 = activation_function(z3)
+            a3 = activation_function(z3, activation_func)
+
 
             # Checks the prediction
             correct_predictions += prediction(a3, label)
