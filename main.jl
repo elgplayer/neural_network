@@ -1,9 +1,6 @@
 using Revise
 using LinearAlgebra
 using Distributions
-#using Plots
-
-# https://adventuresinmachinelearning.com/neural-networks-tutorial/
 
 
 include("src/io_functions.jl")
@@ -14,8 +11,8 @@ include("src/neural_network.jl")
 const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
-const η = 0.01 # Learning rate
-const epoches = 20 # Number of training iteration
+const η = 1 # Learning rate
+const epoches = 2 # Number of training iteration
 
 
 # Init the weights
@@ -35,15 +32,14 @@ let
     b2 = rand(Truncated(Normal(μ, _σ), -1, 1), n_h, 1)
 
     # Load the test and training data
-    global train_data = read_dataset_2("mnist_train")
-    global test_data = read_dataset_2("mnist_test")
+    global train_data = read_dataset("mnist_train")
+    global test_data = read_dataset("mnist_test")
 
     # Training variables
     old_cost = 0
     global correct_predictions = 0
     global cost_arr = []
     global prediction_arr = []
-
 
     println("-- Starting --")
 
