@@ -14,27 +14,38 @@ include("src/neural_network.jl")
 const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
-const η = 0.1 # Learning rate
-const epoches = 4
+const η = 0.01 # Learning rate
+const epoches = 20 # Number of training iteration
 
 
 # Init the weights
 let 
 
-    w1 = rand(Truncated(Normal(0, 1), -1, 1), n_h, n_x)
-    w2 = rand(Truncated(Normal(0, 1), -1, 1), n_h, n_h)
-    w3 = rand(Truncated(Normal(0, 1), -1, 1), output_size, n_h)
+    # Generate the weights and biases with a gausian distribution
+    μ = 0 # The mean of the truncated Normal
+    _σ = 1  # The standard deviation of the truncated Normal
+
+    # Init the weights
+    w1 = rand(Truncated(Normal(μ, _σ), -1, 1), n_h, n_x)
+    w2 = rand(Truncated(Normal(μ, _σ), -1, 1), n_h, n_h)
+    w3 = rand(Truncated(Normal(μ, _σ), -1, 1), output_size, n_h)
 
     # Init the biases
-    b1 = rand(Truncated(Normal(0, 1), -1, 1), n_h, 1)
-    b2 = rand(Truncated(Normal(0, 1), -1, 1), n_h, 1)
+    b1 = rand(Truncated(Normal(μ, _σ), -1, 1), n_h, 1)
+    b2 = rand(Truncated(Normal(μ, _σ), -1, 1), n_h, 1)
+
+    # Load the test and training data
+    global train_data = read_dataset_2("mnist_train")
+    global test_data = read_dataset_2("mnist_test")
 
     # Training variables
     old_cost = 0
     global correct_predictions = 0
     global cost_arr = []
-    global train_data = read_dataset_2("mnist_train")
-    global test_data = read_dataset_2("mnist_test")
+    global prediction_arr = []
+
+
+    println("-- Starting --")
 
     for epoch=1:epoches
 
@@ -125,14 +136,13 @@ let
 
             # Checks the prediction
             correct_predictions += prediction(a3, label)
-
+            
         end
 
         println("Epoch: ", epoch, " | Number of correct_predictions: ", correct_predictions)
+        append!(prediction_arr, correct_predictions)
         correct_predictions = 0
 
     end
 
 end
-
-# println("---")
