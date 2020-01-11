@@ -22,24 +22,17 @@ include("src/io_functions.jl")
 include("src/activation_functions.jl")
 include("src/neural_network.jl")
 
-# Get the data
-data = read_dataset(2)
-label = data[1]
-image = data[2]
 
-# Normalisze the data
-image = image / 255
 
-const n_x = size(image)[1]
-const n_h = 64
-const output_size = 10
+const n_x = 784 # Image as 1d vector
+const n_h = 64 # Hidden layer size
+const output_size = 10 # Number of output nodes
 const η = 1 # Learning rate
 
 
 
-x = image
-
 # Init the weights
+let 
 w1 = rand(Truncated(Normal(0, 1), 0, 1), n_h, n_x)
 w2 = rand(Truncated(Normal(0, 1), 0, 1), n_h, n_h)
 w3 = rand(Truncated(Normal(0, 1), 0, 1), output_size, n_h)
@@ -47,6 +40,23 @@ w3 = rand(Truncated(Normal(0, 1), 0, 1), output_size, n_h)
 # Init the biases
 b1 = rand(Truncated(Normal(0, 1), 0, 1), n_h, 1)
 b2 = rand(Truncated(Normal(0, 1), 0, 1), n_h, 1)
+
+# Training variables
+old_cost = 0
+global correct_predictions = 0
+global cost_arr = []
+
+for i=1:1000
+#i = 1
+
+# Get the data
+data = read_dataset(i)
+label = data[1]
+image = data[2]
+
+# Normalisze the data
+image = image / 255
+x = image
 
 # Feedforward
 z1 = (w1 * x) + b1
@@ -58,11 +68,17 @@ a2 = σ.(z2)
 z3 = (w3 * a2)
 a3 = σ.(z3)
 
+# Checks the prediction
+correct_predictions += prediction(a3, label)
+
 # Make the label one hot encoded
 desired_output = one_hot(label)
 
 # Calculate the cost
 cost = MSE(a3, desired_output)
+#println("Number of correct_predictions: ", correct_predictions, " | Cost: ", cost, " | Δ Cost: ", cost - old_cost)
+old_cost = cost
+append!(cost_arr, cost)
 
 # Back propigation
 # Error in output layer
@@ -90,7 +106,13 @@ b2 = b2 - η * δ_2
 w1 = w1 - η * δ_1 * transpose(x)
 b1 = b1 - η * δ_1
 
+if i % 100 == 0
+    println(i)
+end
 
 
+end
 
-println("---")
+end
+
+# println("---")
