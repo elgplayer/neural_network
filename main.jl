@@ -3,18 +3,6 @@ using LinearAlgebra
 using Distributions
 #using Plots
 
-# Check if the module is defined; if not --> Load the module
-# if isdefined(Main, :Data_Reading) == false
-
-#     println("Loading Data_Reading")
-#     include("src/io_functions.jl")
-#     using .Data_Reading
-
-# end
-
-# Plot the image
-#heatmap(image)
-
 # https://adventuresinmachinelearning.com/neural-networks-tutorial/
 
 
@@ -23,24 +11,23 @@ include("src/activation_functions.jl")
 include("src/neural_network.jl")
 
 
-
 const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
-const η = 1 # Learning rate
-const epoches = 2
+const η = 0.1 # Learning rate
+const epoches = 4
 
 
 # Init the weights
 let 
 
-    w1 = rand(Truncated(Normal(0, 1), 0, 1), n_h, n_x)
-    w2 = rand(Truncated(Normal(0, 1), 0, 1), n_h, n_h)
-    w3 = rand(Truncated(Normal(0, 1), 0, 1), output_size, n_h)
+    w1 = rand(Truncated(Normal(0, 1), -1, 1), n_h, n_x)
+    w2 = rand(Truncated(Normal(0, 1), -1, 1), n_h, n_h)
+    w3 = rand(Truncated(Normal(0, 1), -1, 1), output_size, n_h)
 
     # Init the biases
-    b1 = rand(Truncated(Normal(0, 1), 0, 1), n_h, 1)
-    b2 = rand(Truncated(Normal(0, 1), 0, 1), n_h, 1)
+    b1 = rand(Truncated(Normal(0, 1), -1, 1), n_h, 1)
+    b2 = rand(Truncated(Normal(0, 1), -1, 1), n_h, 1)
 
     # Training variables
     old_cost = 0
@@ -64,10 +51,10 @@ let
             x = image
 
             # Feedforward
-            z1 = (w1 * x) + b1
+            z1 = (w1 * x) .+ b1
             a1 = σ.(z1)
 
-            z2 = (w2 * a1) + b2
+            z2 = (w2 * a1) .+ b2
             a2 = σ.(z2)
 
             z3 = (w3 * a2)
@@ -78,6 +65,7 @@ let
 
             # Calculate the cost
             cost = MSE(a3, desired_output)
+            #println(cost)
             #old_cost = cost
             #append!(cost_arr, cost)
 
@@ -97,15 +85,15 @@ let
 
             # Gradient descent
             # Third layer
-            w3 = w3 - η * δ_3 * transpose(a2)
+            w3 = w3 .- η * δ_3 * transpose(a2)
 
             # Second layer
-            w2 = w2 - η * δ_2 * transpose(a1)
-            b2 = b2 - η * δ_2
+            w2 = w2 .- η * δ_2 * transpose(a1)
+            b2 = b2 .- η * δ_2
 
             # First layer
-            w1 = w1 - η * δ_1 * transpose(x)
-            b1 = b1 - η * δ_1
+            w1 = w1 .- η * δ_1 * transpose(x)
+            b1 = b1 .- η * δ_1
 
             if i % 10000 == 0
                 println("Epoch : ", epoch, " | I: ", i)
