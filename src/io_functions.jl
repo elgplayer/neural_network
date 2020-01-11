@@ -2,77 +2,40 @@
 __precompile__()
 
 
-#module Data_Reading
-
 using CSV
 using DataFrames
 
-# # Iterate over the rows
-# for i = 1:size(data)[1]
-#     #println(i)
-#     row = data[i, :]
-# end
-# https://www.juliabloggers.com/classifying-handwritten-digits-with-neural-networks/
 
-#export read_dataset
+function read_dataset(file_name="mnist_train")
+   """
+   Reads the training data from disk, converts the data from DataFrames to arrays
+   Goes through the array, seperating the label and image data, which it returns as a list
+   that contains tuples whose contents is the label and the image data.
 
-function read_dataset(row=1, data_reshape=false)
+   Attributes:
 
-   # Read the data
-   #file_path = "data/mnist_test_small.csv"
-   file_path = "data/mnist_train.csv"
-   data = CSV.read(file_path)
+      * file_name (str) [default="mnist_train"]: File name of the CSV file (WITHOUT EXTENSION!)
 
-   i = row
-   row = data[i, :]
-   label = row.label
-   picture_data = row[2:size(row)[1]]
-
-   picture_data_matrix = Vector{Float64}()
-   for i=1:size(picture_data)[1]
-
-      append!(picture_data_matrix, picture_data[i])
-
-   end
-
-   n_rows = 28
-   n_cols = 28
-
-   # Reshape the data
-   picture_data_matrix = reshape(picture_data_matrix, n_rows, n_cols)
-
-   # TODO: Unclear why
-   # The data needs to be rotated 90 degress to the left
-   picture_data_matrix = rotl90(picture_data_matrix)
-
-   # TODO: This is retarded
-   if data_reshape == false
-      # Reverert back to vector format
-      picture_data_matrix = reshape(picture_data_matrix, :, 1)
-   end
-
-   return (label, picture_data_matrix)
-
-end
-
-
-function read_dataset_2(file_name="mnist_train")
+   return: List of the data with tuples (label, image_array)
+   """
     
    # Parse the file_path
    file_path = "data/$(lpad(file_name,2,"0")).csv"
    data = CSV.read(file_path)
 
    # Convert the dataframe to an array
-   df1 = convert(Matrix,data)
+   df1 = convert(Matrix, data)
 
    # Remove the first column
    image_array = df1[:, 1:size(df1,2) .!= 1] # Removes the first column
    answer_array = df1[:, 1] # Selects the first column
 
+   # Inits empty image_list and sets the constraints of the image
    image_list = [];
    n_rows = 28
    n_cols = 28
 
+   # Goes through the answer_array
    for i=1:size(answer_array)[1]
 
        image = image_array[i, :] # Select the entire row at index "i"
@@ -92,7 +55,3 @@ function read_dataset_2(file_name="mnist_train")
    return image_list
 
 end
-
-
-
-#end

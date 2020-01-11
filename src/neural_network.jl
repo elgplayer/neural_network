@@ -1,8 +1,5 @@
 using Plots
 
-# Y_𝒊 = [0, 0.2, 0.5, 0.9, 0, 0, 0, 0, 0.2, 0.53]
-
-# Ŷ__𝒊 = [0, 0.0, 0.0, 1, 0, 0, 0, 0, 0.0, 0.0]
 
 function MSE(Y_𝒊, Ŷ__𝒊)
     """
@@ -28,6 +25,7 @@ function MSE(Y_𝒊, Ŷ__𝒊)
 
 end
 
+
 function cost_derivative(output, desired_output)
     """
     Derative of the cost function MSE
@@ -40,9 +38,10 @@ function cost_derivative(output, desired_output)
     return: Derative of the MSE (Vector)
     """
 
-    return output - desired_output
+    return (output - desired_output)
 
 end
+
 
 function hadmard(A, B)
     """
@@ -55,7 +54,8 @@ function hadmard(A, B)
 
     return: New array as hadmard product of the array A and B
     """
-    broadcast!(*,A,A,B)
+    return broadcast!(*,A,A,B)
+
 end
 
 
@@ -70,8 +70,8 @@ function one_hot(label)
     return: One hot encoded array
     """
 
-    return_arr = zeros(10)
-    return_arr[label + 1] = 1
+    return_arr = zeros(10) # Create zero array
+    return_arr[label + 1] = 1 # Add a 1 at the index of the label
 
     return return_arr
 
@@ -93,20 +93,42 @@ function prediction(output, label)
     
     # Checks if the index of the output corresponds to the correct label
     if (findmax(output)[2][1]-1) == label
+
         return 1
+
     else
+
         return 0
+
     end
-    
 
 end
 
+
 function plot_picture(image)
+    """
+    Plots a picture given an array
 
-    if size(image)[1] == 784
-        image = reshape(image, 28, 28)
+    Attributes:
+
+        * image (Vector): 1D input vector to reshape to a n*n matrix which will be plotted
+
+    """
+
+    # Takes the square of the matrix
+    image_dim = sqrt(size(image)[1])
+
+    # Checks if it is a perfect square or not
+    if isinteger(image_dim) == true
+
+        image_dim = Int(image_dim) # Convert Float to Int
+        image = reshape(image, image_dim, image_dim) # Reshape the matrix to the squares dimensions
+        heatmap(image) # Plot the image
+
+    else
+
+        throw("IMAGE_DIM_IS_FLOAT")
+
     end
-
-    heatmap(image)
 
 end
