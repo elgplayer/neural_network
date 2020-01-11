@@ -49,3 +49,51 @@ function ReLU_der(x::Real)
 
 end
 
+
+function activation_function(input, derative=false, activation_function="sigmoid")
+
+    if activation_function == "sigmoid"
+
+        if derative == true
+
+            return σ′.(input)
+
+        else
+
+            return σ.(input)
+
+        end
+
+
+    elseif activation_function == "ReLU"
+
+        if derative == true
+
+            return ReLU.(input)
+
+        else
+
+            return ReLU_der.(input)
+
+        end
+
+    
+    elseif  activation_function == "leaky_ReLU"
+
+        if derative == true
+
+            return leaky_ReLU.(input)
+
+        else
+
+            return ReLU_der.(input)
+
+        end
+
+    else
+
+        throw("INVALID_ACTIVATION_FUNCTION")
+
+    end
+
+end
