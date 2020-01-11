@@ -1,5 +1,7 @@
+using Plots
 
 # Y_𝒊 = [0, 0.2, 0.5, 0.9, 0, 0, 0, 0, 0.2, 0.53]
+
 # Ŷ__𝒊 = [0, 0.0, 0.0, 1, 0, 0, 0, 0, 0.0, 0.0]
 
 function MSE(Y_𝒊, Ŷ__𝒊)
@@ -27,13 +29,34 @@ function MSE(Y_𝒊, Ŷ__𝒊)
 end
 
 function cost_derivative(output, desired_output)
+    """
+    Derative of the cost function MSE
+
+    Attributes:
+
+        * output (Vector): What the network predicated
+        * desired_output (Vector): What the output should have been
+
+    return: Derative of the MSE (Vector)
+    """
+
     return output - desired_output
+
 end
 
 function hadmard(A, B)
+    """
+    Creates a new array by taking the hadmard product of two arrays (element wise multiplication)
+
+    Attributes:
+
+        A (matrix): Matrix A
+        B (matrix): Matrix B 
+
+    return: New array as hadmard product of the array A and B
+    """
     broadcast!(*,A,A,B)
 end
-
 
 
 function one_hot(label)
@@ -51,5 +74,39 @@ function one_hot(label)
     return_arr[label + 1] = 1
 
     return return_arr
+
+end
+
+
+function prediction(output, label)
+    """
+    Checks if the prediction of the network (maxium value of the output)
+    matches with the label
+
+    Attributes:
+        
+        * output (Vector): Output of the network
+        * label (int): The correct output
+
+    return: 1 if the answer is correct; else return 0
+    """
+    
+    # Checks if the index of the output corresponds to the correct label
+    if (findmax(output)[2][1]-1) == label
+        return 1
+    else
+        return 0
+    end
+    
+
+end
+
+function plot_picture(image)
+
+    if size(image)[1] == 784
+        image = reshape(image, 28, 28)
+    end
+
+    heatmap(image)
 
 end
