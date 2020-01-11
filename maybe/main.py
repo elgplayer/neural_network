@@ -101,7 +101,7 @@ for i in range(2000):
     A2 = sigmoid(Z2)
 
     cost = compute_loss(Y, A2)
-    break
+   
 
     dZ2 = A2-Y
     dW2 = (1./m) * np.matmul(dZ2, A1.T)
@@ -116,7 +116,7 @@ for i in range(2000):
     b2 = b2 - learning_rate * db2
     W1 = W1 - learning_rate * dW1
     b1 = b1 - learning_rate * db1
-    
+    break
     
 
     if i % 100 == 0:

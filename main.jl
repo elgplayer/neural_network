@@ -33,7 +33,9 @@ image = image / 255
 const n_x = size(image)[1]
 const n_h = 64
 const output_size = 10
-const learning_rate = 1
+const η = 1 # Learning rate
+
+
 
 x = image
 
@@ -56,23 +58,39 @@ a2 = σ.(z2)
 z3 = (w3 * a2)
 a3 = σ.(z3)
 
+# Make the label one hot encoded
 desired_output = one_hot(label)
+
+# Calculate the cost
 cost = MSE(a3, desired_output)
 
-∂c_a = cost_derivative(a3, desired_output)
-∂a_z = σ′.(z3)
-∂z_w = z2
+# Back propigation
+# Error in output layer
+∇a_C_3 = cost_derivative(a3, desired_output)
+δ_3 = hadmard(∇a_C_3, σ′.(z3))
 
-∂c_w = hadmard(∂c_a, ∂a_z)
+# Error in second layer
+∇a_C_2 = (transpose(w3) * δ_3)  
+δ_2 = hadmard(∇a_C_2, σ′.(z2))
 
-#∂z_w * ∂a_z * 
+# Error in first layer
+∇a_C_1 = (transpose(w2) * δ_2)  
+δ_1 = hadmard(∇a_C_1, σ′.(z1))
 
-# ∇a_C = cost_derivative(a3, desired_output)
 
-# δ = hadmard(∇a_C, σ′.(z3))
-# δ_1 = hadmard(transpose(w3) * δ, σ′.(z2))
-# δ_2 = hadmard(transpose(w2) * δ_1, σ′.(z1)) 
-\
+# Gradient descent
+# Third layer
+w3 = w3 - η * δ_3 * transpose(a2)
+
+# Second layer
+w2 = w2 - η * δ_2 * transpose(a1)
+b2 = b2 - η * δ_2
+
+# First layer
+w1 = w1 - η * δ_1 * transpose(x)
+b1 = b1 - η * δ_1
+
+
 
 
 println("---")
