@@ -56,9 +56,10 @@ function read_dataset(row=1, data_reshape=false)
 end
 
 
-function read_dataset_2()
+function read_dataset_2(file_name="mnist_train")
     
-   file_path = "data/mnist_train.csv"
+   # Parse the file_path
+   file_path = "data/$(lpad(file_name,2,"0")).csv"
    data = CSV.read(file_path)
 
    # Convert the dataframe to an array
