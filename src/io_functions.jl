@@ -67,20 +67,24 @@ function plot_picture(image)
 
    """
 
-   # Takes the square of the matrix
-   image_dim = sqrt(size(image)[1])
+    # Takes the square of the matrix
+    image_dim = sqrt(size(image)[1])
 
-   # Checks if it is a perfect square or not
-   if isinteger(image_dim) == true
+    # Checks if it is a perfect square or not
+    if size(image)[1] == size(image)[2] 
 
-       image_dim = Int(image_dim) # Convert Float to Int
-       image = reshape(image, image_dim, image_dim) # Reshape the matrix to the squares dimensions
-       heatmap(image) # Plot the image
+        heatmap(image) # Plot the image
 
-   else
+    elseif isinteger(image_dim) == true
 
-       throw("IMAGE_DIM_IS_FLOAT")
+        image_dim = Int(image_dim) # Convert Float to Int
+        image = reshape(image, image_dim, image_dim) # Reshape the matrix to the squares dimensions
+        heatmap(image) # Plot the image
 
-   end
+    else
+
+        throw("IMAGE_DIM_IS_FLOAT")
+
+    end
 
 end

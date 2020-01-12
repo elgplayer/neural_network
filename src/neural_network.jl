@@ -78,7 +78,7 @@ function one_hot(label)
 end
 
 
-function check_prediction(output, label, save_fails, image)
+function check_prediction(output, label, save_fails=Nothing, image=Nothing)
     """
     Checks if the prediction of the network (maxium value of the output)
     matches with the label

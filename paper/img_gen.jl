@@ -22,3 +22,6 @@ file_path = "pictures/$(lpad(file_name,2,"0"))"
 
 plot(σ, lower_bound:step_size:upper_bound, title="Sigmoid aktiveringsfunktion", label = "\\sigma (x)" )
 png(file_path)
+
+# CNN gissningar array
+#plot(1:100, prediction_arr, label="CNN", legend=:bottomright, yaxis="Antal korrekta gissningar / 10000", xaxis="Antal iterationer")

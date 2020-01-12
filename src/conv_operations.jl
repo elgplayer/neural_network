@@ -20,7 +20,7 @@ function striding(input_matrix, filter_arr, step_size=1)
 
     return: New smaller array
     """
-    println("-------")
+    #println("-------")
 
     # Gets the box size
     input_matrix_size = size(input_matrix, 2)
@@ -279,7 +279,7 @@ function pooling(input_matrix, pool_size=(2,2), pooling_type="max", pad=false)
     new_array = Vector{Float64}()
     index_offset = [0, 0] # Init the index off Set
 
-    println("----")
+    #println("----")
     if debug == true
         
         println("Input matrix: ")
@@ -359,3 +359,5 @@ end
 
 # Pretty prints the array
 #show(stdout, "text/plain", smaller_array)
+
+

@@ -1,3 +1,6 @@
+using CSV
+using DataFrames
+
 using Revise
 using LinearAlgebra
 using Distributions
@@ -6,17 +9,17 @@ using Distributions
 include("src/io_functions.jl")
 include("src/activation_functions.jl")
 include("src/neural_network.jl")
+include("src/conv_operations.jl")
 
 
-const n_x = 784 # Image as 1d vector
+const n_x = 1352 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
-η = 1 # Learning rate
-epoches = 4 # Number of training iteration
 
+let
 
-# Init the weights
-let 
+    η = 0.01 # Learning rate
+    epoches = 100 # Number of training iteration
 
     # Generate the weights and biases with a gausian distribution
     μ = 0 # The mean of the truncated Normal
@@ -47,6 +50,7 @@ let
 
     println("-- Starting --")
 
+    @time begin
     for epoch=1:epoches
 
         if epoch == epoches
@@ -54,8 +58,7 @@ let
         else
             save_fails = false
         end
-
-        # Training
+    
         for i=1:size(train_data)[1]
 
             # Get the data
@@ -66,6 +69,43 @@ let
             # Normalisze the data
             image = image / 255
             x = image
+            x_matrix = reshape(x, 28, 28)
+
+            number_of_filters = 8
+            filter_size = 3
+
+            # Init the data with a gausian distribution
+            conv_filters = rand(Truncated(Normal(μ, _σ), -1, 1), filter_size, filter_size, number_of_filters,) / 9
+            conv_arr = []
+            pooling_arr = []
+
+            # Convelution
+            for a=1:number_of_filters
+
+                # Select the filter that was randomly generated
+                filter = conv_filters[:, :, a]
+
+                # Stride the filter over te image
+                strided = striding(x_matrix, filter)
+
+                # Append the strided array to an array
+                append!(conv_arr, strided)
+
+            end
+            # Reshape the filter to a 26x26x8 matrix
+            conv_arr = reshape(conv_arr, 26, 26, number_of_filters)
+
+            # Pooling
+            for a=1:number_of_filters
+
+                append!(pooling_arr, pooling(conv_arr[:, :, a]))
+
+            end
+            # Reshape the filter to a 13x13x8 matrix
+            pooling_arr = reshape(pooling_arr, 13, 13, 8)
+
+
+            x = vcat(pooling_arr...)
 
             # Feedforward
             z1 = (w1 * x) .+ b1
@@ -76,6 +116,7 @@ let
 
             z3 = (w3 * a2)
             a3 = activation_function(z3, activation_func)
+
 
             # Make the label one hot encoded
             desired_output = one_hot(label)
@@ -109,24 +150,60 @@ let
             w1 = w1 .- η * δ_1 * transpose(x)
             b1 = b1 .- η * δ_1
 
+
             if i % 10000 == 0
                 println("Epoch : ", epoch, " | I: ", i)
             end
 
         end
 
-    
         # Test
         for i=1:size(test_data)[1]
 
             # Get the data
-            data = test_data[i]
+            data = train_data[i]
             label = data[1]
             image = data[2]
 
             # Normalisze the data
             image = image / 255
             x = image
+            x_matrix = reshape(x, 28, 28)
+            
+            number_of_filters = 8
+            filter_size = 3
+
+            # Init the data with a gausian distribution
+            conv_filters = rand(Truncated(Normal(μ, _σ), -1, 1), filter_size, filter_size, number_of_filters,) / 9
+            conv_arr = []
+            pooling_arr = []
+
+            # Convelution
+            for a=1:number_of_filters
+
+                # Select the filter that was randomly generated
+                filter = conv_filters[:, :, a]
+
+                # Stride the filter over te image
+                strided = striding(x_matrix, filter)
+
+                # Append the strided array to an array
+                append!(conv_arr, strided)
+
+            end
+            # Reshape the filter to a 26x26x8 matrix
+            conv_arr = reshape(conv_arr, 26, 26, number_of_filters)
+
+            # Pooling
+            for a=1:number_of_filters
+
+                append!(pooling_arr, pooling(conv_arr[:, :, a]))
+
+            end
+            # Reshape the filter to a 13x13x8 matrix
+            pooling_arr = reshape(pooling_arr, 13, 13, 8)
+
+            x = vcat(pooling_arr...)
 
             # Feedforward
             z1 = (w1 * x) .+ b1
@@ -142,13 +219,12 @@ let
             correct_predictions += check_prediction(a3, label, save_fails, image)
             
         end
-
-
-        
+            
         println("Epoch: ", epoch, " | Number of correct_predictions: ", correct_predictions)
         append!(prediction_arr, correct_predictions)
         correct_predictions = 0
 
+    end
     end
 
 end
