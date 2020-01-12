@@ -11,8 +11,8 @@ include("src/neural_network.jl")
 const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
-const η = 1 # Learning rate
-const epoches = 2 # Number of training iteration
+η = 1 # Learning rate
+epoches = 4 # Number of training iteration
 
 
 # Init the weights
@@ -40,6 +40,7 @@ let
     global correct_predictions = 0
     global cost_arr = []
     global prediction_arr = []
+    global wrong_predictions = []
 
     activation_func="sigmoid"
     derative=true
@@ -47,6 +48,12 @@ let
     println("-- Starting --")
 
     for epoch=1:epoches
+
+        if epoch == epoches
+            save_fails = true
+        else
+            save_fails = false
+        end
 
         # Training
         for i=1:size(train_data)[1]
@@ -108,6 +115,7 @@ let
 
         end
 
+    
         # Test
         for i=1:size(test_data)[1]
 
@@ -130,12 +138,13 @@ let
             z3 = (w3 * a2)
             a3 = activation_function(z3, activation_func)
 
-
             # Checks the prediction
-            correct_predictions += prediction(a3, label)
+            correct_predictions += check_prediction(a3, label, save_fails, image)
             
         end
 
+
+        
         println("Epoch: ", epoch, " | Number of correct_predictions: ", correct_predictions)
         append!(prediction_arr, correct_predictions)
         correct_predictions = 0

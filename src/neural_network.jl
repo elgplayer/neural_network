@@ -78,7 +78,7 @@ function one_hot(label)
 end
 
 
-function prediction(output, label)
+function check_prediction(output, label, save_fails, image)
     """
     Checks if the prediction of the network (maxium value of the output)
     matches with the label
@@ -92,12 +92,19 @@ function prediction(output, label)
     """
     
     # Checks if the index of the output corresponds to the correct label
-    if (findmax(output)[2][1]-1) == label
+    prediction = findmax(output)[2][1]-1
+
+    if (prediction) == label
 
         return 1
 
     else
 
+        if save_fails == true
+            output_tuple = (prediction, label, image)
+            push!(wrong_predictions, output_tuple)
+        end
+        
         return 0
 
     end
@@ -105,6 +112,5 @@ function prediction(output, label)
 end
 
 
-function feed_forward()
 
-end
+
