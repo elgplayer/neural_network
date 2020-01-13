@@ -6,9 +6,9 @@ This is a repository that contains two programs:
 ```feed_forward.jl``` - A simple backpropigating network  
 
 ```conv_network.jl``` -The simple backpropigating network but with a CNN 
-layer in the beginng.
+layer in the beginning.
 
-The networks train on the MNIST dataset (60 000 training images) and 
+The network is trained on the MNIST dataset (60 000 training images) and 
 validates on the test labels (10 000 images). The images are 28x28 
 pixels.
 
