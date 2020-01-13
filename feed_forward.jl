@@ -1,7 +1,7 @@
 using Revise
 using LinearAlgebra
 using Distributions
-
+using Random
 
 include("src/io_functions.jl")
 include("src/activation_functions.jl")
@@ -11,9 +11,11 @@ include("src/neural_network.jl")
 const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
-η = 1 # Learning rate
-epoches = 4 # Number of training iteration
+η = 0.01 # Learning rate
+epoches = 100 # Number of training iteration
 
+# Set the seed
+Random.seed!(1234)
 
 # Init the weights
 let 

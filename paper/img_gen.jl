@@ -25,3 +25,6 @@ png(file_path)
 
 # CNN gissningar array
 #plot(1:100, prediction_arr, label="CNN", legend=:bottomright, yaxis="Antal korrekta gissningar / 10000", xaxis="Antal iterationer")
+
+# Simple neural_network
+#plot(1:100, prediction_arr, label="Simpelt neuronätverk", legend=:bottomright, yaxis="Antal korrekta gissningar", xaxis="Antal iterationer")
