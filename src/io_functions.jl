@@ -4,7 +4,7 @@ __precompile__()
 
 using CSV
 using DataFrames
-
+using Plots
 
 function read_dataset(file_name="mnist_train")
    """

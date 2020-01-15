@@ -112,5 +112,3 @@ function check_prediction(output, label, save_fails=Nothing, image=Nothing)
 end
 
 
-
-

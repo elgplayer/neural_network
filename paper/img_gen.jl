@@ -20,7 +20,7 @@ step_size = 0.1
 file_name = "sigmoid_aktiveringfunktion"
 file_path = "pictures/$(lpad(file_name,2,"0"))"
 
-plot(σ, lower_bound:step_size:upper_bound, title="Sigmoid aktiveringsfunktion", label = "\\sigma (x)" )
+plot(σ, lower_bound:step_size:upper_bound, label = "\\sigma (x)" )
 png(file_path)
 
 # CNN gissningar array
