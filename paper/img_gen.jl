@@ -28,3 +28,10 @@ png(file_path)
 
 # Simple neural_network
 #plot(1:100, prediction_arr, label="Simpelt neuronätverk", legend=:bottomright, yaxis="Antal korrekta gissningar", xaxis="Antal iterationer")
+
+
+# p1= heatmap(reshape(train_data[1][2], 28, 28), xaxis=false, yaxis=false, titlefontsize=20, fontfamily=font(20, "MingLiU"), title=string(train_data[2][1]))
+# p2 = heatmap(reshape(train_data[2][2], 28, 28), xaxis=false, yaxis=false, titlefontsize=20, fontfamily=font(20, "MingLiU"), title=string(train_data[2][1]))
+# p3 = heatmap(reshape(train_data[3][2], 28, 28), xaxis=false, yaxis=false, titlefontsize=20, fontfamily=font(20, "MingLiU"), title=string(train_data[3][1]))
+# p4 = heatmap(reshape(train_data[4][2], 28, 28), xaxis=false, yaxis=false, titlefontsize=20, fontfamily=font(20, "MingLiU"), title=string(train_data[4][1]))
+# plot(p1,p2,p3,p4,layout=(2,2),legend=false)

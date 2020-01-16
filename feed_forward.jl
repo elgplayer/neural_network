@@ -12,7 +12,8 @@ const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
 η = 0.01 # Learning rate
-epoches = 100 # Number of training iteration
+epoches = 1 # Number of training iteration
+
 
 
 
@@ -25,6 +26,8 @@ let
     # Generate the weights and biases with a gausian distribution
     μ = 0 # The mean of the truncated Normal
     _σ = 1  # The standard deviation of the truncated Normal
+
+    global weight_arr = []
 
     mutable struct Weights
         w1; w2; w3;
@@ -141,6 +144,8 @@ let
             # Error in first layer
             ∇a_C_1 = (transpose(weights.w2) * δ_2)  
             δ_1 = hadmard(∇a_C_1, activation_function(z1, activation_func, derative))
+
+            #push!(weight_arr, deepcopy(weights))
 
 
             # Gradient descent

@@ -18,6 +18,8 @@ const n_x = 1352 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
 
+global weight_arr = []
+
 let
 
     Random.seed!(1234) # Random seeed
@@ -241,6 +243,8 @@ let
         println("Epoch: ", epoch, " | Number of correct_predictions: ", correct_predictions)
         append!(prediction_arr, correct_predictions)
         correct_predictions = 0
+
+        push!(weight_arr, weights)
 
     end
     end
