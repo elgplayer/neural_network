@@ -94,6 +94,7 @@ function check_prediction(output, label, save_fails=Nothing, image=Nothing)
     # Checks if the index of the output corresponds to the correct label
     prediction = findmax(output)[2][1]-1
 
+
     if (prediction) == label
 
         return 1
@@ -101,8 +102,12 @@ function check_prediction(output, label, save_fails=Nothing, image=Nothing)
     else
 
         if save_fails == true
-            output_tuple = (prediction, label, image)
+
+            confidence_str = string(round(findmax(output)[1] / sum(output), digits=2) * 100) * " %"
+
+            output_tuple = (prediction, label, image, confidence_str)
             push!(wrong_predictions, output_tuple)
+
         end
         
         return 0

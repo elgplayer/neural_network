@@ -35,3 +35,13 @@ png(file_path)
 # p3 = heatmap(reshape(train_data[3][2], 28, 28), xaxis=false, yaxis=false, titlefontsize=20, fontfamily=font(20, "MingLiU"), title=string(train_data[3][1]))
 # p4 = heatmap(reshape(train_data[4][2], 28, 28), xaxis=false, yaxis=false, titlefontsize=20, fontfamily=font(20, "MingLiU"), title=string(train_data[4][1]))
 # plot(p1,p2,p3,p4,layout=(2,2),legend=false)
+
+
+# The four wrong wrong_predictions for ANN
+# p1 = heatmap(reshape(wrong_predictions[1][3], 28, 28), xaxis=false, yaxis=false, titlefontsize=10, title="Gissning: " * string(wrong_predictions[1][1]) * " --> " * string(wrong_predictions[1][2]) * " (" * wrong_predictions[1][4]*")")
+# p2 = heatmap(reshape(wrong_predictions[2][3], 28, 28), xaxis=false, yaxis=false, titlefontsize=10, title="Gissning: " * string(wrong_predictions[2][1]) * " --> " * string(wrong_predictions[2][2]) * " (" * wrong_predictions[2][4]*")")
+# p3 = heatmap(reshape(wrong_predictions[3][3], 28, 28), xaxis=false, yaxis=false, titlefontsize=10, title="Gissning: " * string(wrong_predictions[3][1]) * " --> " * string(wrong_predictions[3][2]) * " (" * wrong_predictions[3][4]*")")
+# p4 = heatmap(reshape(wrong_predictions[4][3], 28, 28), xaxis=false, yaxis=false, titlefontsize=10, title="Gissning: " * string(wrong_predictions[4][1]) * " --> " * string(wrong_predictions[4][2]) * " (" * wrong_predictions[4][4]*")")
+
+# plot(p1,p2,p3,p4,layout=(2,2),legend=false)
+

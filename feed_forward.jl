@@ -12,7 +12,7 @@ const n_x = 784 # Image as 1d vector
 const n_h = 64 # Hidden layer size
 const output_size = 10 # Number of output nodes
 η = 0.01 # Learning rate
-epoches = 1 # Number of training iteration
+epoches = 100 # Number of training iteration
 
 
 
@@ -146,7 +146,6 @@ let
             δ_1 = hadmard(∇a_C_1, activation_function(z1, activation_func, derative))
 
             #push!(weight_arr, deepcopy(weights))
-
 
             # Gradient descent
             # Third layer

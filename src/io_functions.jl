@@ -88,3 +88,4 @@ function plot_picture(image)
     end
 
 end
+
